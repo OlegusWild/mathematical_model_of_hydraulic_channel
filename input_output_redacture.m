@@ -1,36 +1,43 @@
 clear
-% Parameters of Fft
-Fs = 1000; % sampling, depends on apparatus
-Ts = 1/Fs; % timestep
+% Параметры Фурье-преобразования
+Fs = 1000; % частота дискретизации
+Ts = 1/Fs; % шаг по времени
 
-%duration = [0 10]; % initial and final points of time domain
-duration = [0 10]; % initial and final points of time domain
+% Выбор временного отрезка
+%duration = [0 30]; % начальная и конечная точки отрезка
+duration = [0 10]; % начальная и конечная точки отрезка
 
 
-FftL = 2^nextpow2(length(duration(1):Ts:duration(2))); % number of points fot FFT
-t = linspace(duration(1),duration(2), FftL);
-w = 0:Fs/FftL:Fs - Fs/FftL;
+FftL = 2^nextpow2(length(duration(1):Ts:duration(2))); % кол-во точек преобразования
+t = linspace(duration(1),duration(2), FftL); % в соответствии с кол-вом точек строим временную шкалу
+w = 0:Fs/FftL:Fs - Fs/FftL; % "вырезаем" реальные частоты >= 0
 
-% parameters for transfer-function for the drill line
-    a = 0.4; % 1/s
-    L = 1000; % m
-    K = 4*10^(-8); % m^3/Pa/s
-    K_l = 2.2 * 10^9; % Pa
-    E = 2 * 10^11; % Pa
-    T = 0.01; % 1/s
-     R = 1e6; % ?
+% Параметры передаточной функции скважины
+    % коэффициент
+    a = 0.4; % 1/с
+    % глубина
+    L = 1000; % м
+    % модуль
+    K = 4*10^(-8); % м^3/(Па*с)
+    K_l = 2.2 * 10^9; % Па
+    % модуль Юнга для материала трубы
+    E = 2 * 10^11; % Па
+    % постоянная времени компенсатора
+    T = 0.01; % 1/с
+    % Гидравлические сопротивления
+     R = 1e6; % Па/(м^3/с)^2
       R_1 = R/2;
       R_L = R/2;
-    
-    ro = 2700; % kg/m^3
+    % плотность бурового раствора
+    ro = 2700; % кг/м^3
     K_pr = K_l / (1 + a*K_l/E);
-    c = sqrt(K_pr / ro);
-
-    d = 114; % mm
-    f = pi*d^2/4 *10^(-6); % m^2
-
+    c = sqrt(K_pr / ro); % скорость звука в жидкости, м/с
+    % диаметр трубы
+    d = 114; % мм
+    % площадь сечения трубы
+    f = pi*d^2/4 *10^(-6); % м^2
     
-    % matrix values
+    % Расчёт передаточной ф-ции
     v = 1/c*(w/2).^0.5 .* ((sqrt(w.^2+4*a^2)-w).^0.5 + 1i*(sqrt(w.^2+4*a^2)+w).^0.5);
 
     ro_g = c/f * (1 + 4*a^2 ./ w.^2).^0.25 .* exp(-1i*0.5*atan(2*a./w));
@@ -38,24 +45,23 @@ w = 0:Fs/FftL:Fs - Fs/FftL;
     W = (1i * w * K) ./ (1 + 1i*w.*T);
     
 
-    % pressure
+    % по давлению
     W_line = ( (1+2*R*W) .* cosh(v*L) + (W*ro .* ro_g + ...
     2*R_L ./ (ro*ro_g) .* (1+2*R_1*W) ) .* sinh(v*L)).^(-1);
 
-    W_line(1) = -0.006; % тут NaN!
+    W_line(1) = 1; % ручная коррекция NaN на нулевой частоте
 
-    % Q
+    % по расходу
 %     W_line = W .* ( (1+2*R*W) .* cosh(v*L) + (W*ro.*ro_g + ...
 %     2*R_L ./ (ro*ro_g) .* (1+2*R_1*W) ) .* sinh(v*L)).^(-1);
 %     W_line = W_line * 10^8 * 0.8;
 
    
 
-    % plot(w, abs_W_line,'--', 'linewidth', 2);
-% end
+  
 
 
-% --------------Пробуем сделать полосной фильтр--------------------------
+% --------------Пробуем сделать полосовой фильтр--------------------------
 % order = 64; % Для большого шума 2048
 % cut_off = (0.5) / (Fs/2); % cut_off fr-cy in pi units (0.5 Hz)
 % cut_off_2 = (2.5) / (Fs/2);
@@ -67,7 +73,7 @@ w = 0:Fs/FftL:Fs - Fs/FftL;
 % fft_h_A(1) = fft_h_A(1) / 2;
 
 
-% --------------------------experimental signal--------------------------
+% --------------------------исследуемый сигнал----------------------------
 % Нужно выбрать тип сигнала
 Signal = sin(2*pi*1.7*t);
 % Signal = 5*sin(2*pi*1.7*t) + 5*sin(2*pi*10*t) + 2*sin(2*pi*0.7*t);
@@ -131,7 +137,7 @@ S_out = ifft(Fft_S_out);
 % Создаём шум
 err = rand(1,length(t));
 err = err - mean(err);
-err = err * real(max(S_out))*0.01 / std(err);
+err = err * real(max(S_out))*0.2 / std(err);
 % Добавляем шум к выходному сигналу
 S_out_noise = S_out + err;
 % Преобразуем обратно в частотный домен
@@ -154,9 +160,9 @@ restored_signal_noise = real(restored_signal_noise); % Избавляемся от мнимых дре
 % cubic_test_filt = sgolayfilt(restored_signal_noise, 3, 251);
 
 %-------------Дополнительный сглаживающий MA-фильтр----------------------
-counts_per_frame = 50;
-coef25MA = ones(1, counts_per_frame)/counts_per_frame;
-MA_sig = filter(coef25MA, 1, restored_signal_noise);
+% counts_per_frame = 50;
+% coef25MA = ones(1, counts_per_frame)/counts_per_frame;
+% MA_sig = filter(coef25MA, 1, restored_signal_noise);
 
 
 

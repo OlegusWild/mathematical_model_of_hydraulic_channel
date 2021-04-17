@@ -46,31 +46,31 @@ hold on;
     
 
     % pressure
-%     W_line = ( (1+2*R*W) .* cosh(v*L) + (W*ro .* ro_g + ...
-%     2*R_L ./ (ro*ro_g) .* (1+2*R_1*W) ) .* sinh(v*L)).^(-1);
+    W_line = ( (1+2*R*W) .* cosh(v*L) + (W*ro .* ro_g + ...
+    2*R_L ./ (ro*ro_g) .* (1+2*R_1*W) ) .* sinh(v*L)).^(-1);
 
-    % W_line(1) = -0.006; % тут NaN!
+    W_line(1) = 1; % тут NaN!
 
     % Q
-    W_line = W .* ( (1+2*R*W) .* cosh(v*L) + (W*ro.*ro_g + ...
-    2*R_L ./ (ro*ro_g) .* (1+2*R_1*W) ) .* sinh(v*L)).^(-1);
-    W_line = W_line * 10^8 * 0.8;
+%     W_line = W .* ( (1+2*R*W) .* cosh(v*L) + (W*ro.*ro_g + ...
+%     2*R_L ./ (ro*ro_g) .* (1+2*R_1*W) ) .* sinh(v*L)).^(-1);
+%     W_line = W_line * 10^8 * 0.8;
 
      
     % Строим АЧХ
-%  plot(F, abs(W_line(1:length(F))),'--', 'linewidth', 1.2);
-%     title('АЧХ передаточной функции по давлению');
-%     xlabel('F, Гц');
-%     ylabel('A');   
-%     xlim([0 3])
+ plot(F, abs(W_line(1:length(F))),'--', 'linewidth', 1.2);
+    title('АЧХ передаточной функции по давлению');
+    xlabel('F, Гц');
+    ylabel('A');   
+    xlim([0 3])
 %    
     % Для построения ФЧХ
-  plot(F, angle(W_line(1:length(F)))/pi,'--', 'linewidth', 1);
-    title('ФЧХ передаточной функции по расходу');
-    xlabel('F, Гц');
-    ylabel('ед. \pi');   
-    xlim([0 3])
-    
+%   plot(F, angle(W_line(1:length(F)))/pi,'--', 'linewidth', 1);
+%     title('ФЧХ передаточной функции по расходу');
+%     xlabel('F, Гц');
+%     ylabel('ед. \pi');   
+%     xlim([0 3])
+%     
     
     
 

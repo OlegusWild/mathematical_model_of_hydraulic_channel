@@ -27,5 +27,9 @@ function fft_h = bandpass_filter(Fs, FftL, order, cut_off_freequencies, plotting
         fft_h_A = abs(fft_h) * 2 ./ FftL;
         fft_h_A(1) = fft_h_A(1) / 2;
         F = Fs*(0:FftL/2-1)/FftL;
+        figure();       
         plot(F, fft_h_A(1:length(F)));
+        title('АЧХ полосового фильтра');
+        xlabel('F, Hz');
+        ylabel('A');
     end

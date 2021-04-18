@@ -185,11 +185,6 @@ F = Fs*(0:FftL/2-1)/FftL; % shifting
 % sig_diff_squares = sig_diff .^2;
 % sq_err = sqrt(sum(sig_diff_squares));
 
-%-----------------------filter АЧХ-----------------------------------------
-% fft_h_A = abs(fft_h);
-% fft_h_A = 2*fft_h_A ./ FftL;
-% fft_h_A(1) = fft_h_A(1)/2;
-
 
 %-----------------------------------АЧХ--------------------------------
 % figure('Name', 'АЧХ для входного и выходного сигналов', 'NumberTitle', 'off');

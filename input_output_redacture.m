@@ -56,11 +56,6 @@ w = 0:Fs/FftL:Fs - Fs/FftL; % "вырезаем" реальные частоты >= 0
 %     2*R_L ./ (ro*ro_g) .* (1+2*R_1*W) ) .* sinh(v*L)).^(-1);
 %     W_line = W_line * 10^8 * 0.8;
 
-   
-
-  
-
-
 % --------------Пробуем сделать полосовой фильтр--------------------------
 % order = 64; % Для большого шума 2048
 % cut_off = (0.5) / (Fs/2); % cut_off fr-cy in pi units (0.5 Hz)
@@ -165,16 +160,17 @@ restored_signal_noise = real(restored_signal_noise); % Избавляемся от мнимых дре
 % MA_sig = filter(coef25MA, 1, restored_signal_noise);
 
 
-
-% АЧХ для образа исходного сигнала
-original_fft_A = abs(original_fft);
-original_fft_A = 2*original_fft_A ./ FftL;
-original_fft_A(1) = original_fft_A(1)/2;
-
-% АЧХ для образа Выходного сигнала
-Fft_out_A=abs(Fft_S_out);% Амплитуды преобразования Фурье сигнала
-Fft_out_A=2*Fft_out_A./FftL;% Нормировка спектра по амплитуде
-Fft_out_A(1)=Fft_out_A(1)/2;% Нормировка постоянной составляющей в спектре
+%--------------------спектральные характеристики сигналов-----------------
+% % АЧХ для образа исходного сигнала
+% original_fft_A = abs(original_fft);
+% original_fft_A = 2*original_fft_A ./ FftL;
+% original_fft_A(1) = original_fft_A(1)/2;
+% 
+% % АЧХ для образа Выходного сигнала
+% Fft_out_A=abs(Fft_S_out);% Амплитуды преобразования Фурье сигнала
+% Fft_out_A=2*Fft_out_A./FftL;% Нормировка спектра по амплитуде
+% Fft_out_A(1)=Fft_out_A(1)/2;% Нормировка постоянной составляющей в спектре
+%--------------------------------------------------------------------------
 
 % Частоты
 F = Fs*(0:FftL/2-1)/FftL; % shifting
@@ -184,11 +180,6 @@ F = Fs*(0:FftL/2-1)/FftL; % shifting
 % sig_diff = abs( real(restored_signal_noise) - Signal);
 % sig_diff_squares = sig_diff .^2;
 % sq_err = sqrt(sum(sig_diff_squares));
-
-%-----------------------filter АЧХ-----------------------------------------
-% fft_h_A = abs(fft_h);
-% fft_h_A = 2*fft_h_A ./ FftL;
-% fft_h_A(1) = fft_h_A(1)/2;
 
 
 %-----------------------------------АЧХ--------------------------------

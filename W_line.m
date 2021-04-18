@@ -7,9 +7,9 @@
 % 3) Опции: type - 'P' или 'Q' (по давлению или по расходу)
 
 % Пример использования: 
-% [W_line w t] = W_line(1000, 2700, 114, 1000, [0 10], 'P');
+% [W_line, w, t] = W_line(1000, 2700, 114, 1000, [0 10], 'P');
 
-function [y, w, t]= W_line(L, ro, d, Fs, duration, type)
+function [y, w, t, FftL]= W_line(L, ro, d, Fs, duration, type)
 
     Ts = 1/Fs; % шаг по времени
     FftL = 2^nextpow2(length(duration(1):Ts:duration(2))); % кол-во точек преобразования

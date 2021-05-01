@@ -16,11 +16,11 @@ F = Fs*(0:FftL/2-1)/FftL; % shifting
 
 
 % figure('Name', 'АЧХ передаточной функции', 'NumberTitle', 'off');
-for i=2:7
+for i=1:6
 hold on;
 % parameters for transfer-function for the drill line
     a = 0.4; % 1/s
-    L = 1000*i; % m
+    L = 1000*(i+1); % m
     K = 4*10^(-8); % m^3/Pa/s
     K_l = 2.2 * 10^9; % Pa
     E = 2 * 10^11; % Pa
@@ -29,7 +29,8 @@ hold on;
       R_1 = R/2;
       R_L = R/2;
     
-    ro = 2700; % kg/m^3
+%     ro = 1000 + (2700-1000)/5*i; % kg/m^3
+    ro = 2700;
     K_pr = K_l / (1 + a*K_l/E);
     c = sqrt(K_pr / ro);
 
@@ -58,18 +59,18 @@ hold on;
 
      
     % Строим АЧХ
- plot(F, abs(W_line(1:length(F))),'--', 'linewidth', 1.2);
-    title('АЧХ передаточной функции по давлению');
-    xlabel('F, Гц');
-    ylabel('A');   
-    xlim([0 3])
+%  plot(F, abs(W_line(1:length(F))),'--', 'linewidth', 1.2);
+%     title('АЧХ передаточной функции по давлению и расходу');
+%     xlabel('F, Гц');
+%     ylabel('|W|');   
+%     xlim([0 3])
 %    
     % Для построения ФЧХ
-%   plot(F, angle(W_line(1:length(F)))/pi,'--', 'linewidth', 1);
-%     title('ФЧХ передаточной функции по расходу');
-%     xlabel('F, Гц');
-%     ylabel('ед. \pi');   
-%     xlim([0 3])
+  plot(F, angle(W_line(1:length(F)))/pi,'-', 'linewidth', 1);
+    title('ФЧХ передаточной функции по давлению');
+    xlabel('F, Гц');
+    ylabel('ед. \pi');   
+    xlim([0 2])
 %     
     
     

@@ -10,7 +10,7 @@ end
 
 if sig_name == "harmonical"
     % 2) Сигнал с несколькими гармониками
-    Signal = 5*sin(2*pi*1.7*t) + 5*sin(2*pi*10*t) + 2*sin(2*pi*0.7*t);
+    Signal = 5*sin(2*pi*1.7*t) + 5*sin(2*pi*3.4*t) + 2*sin(2*pi*0.7*t);
 end
 
 if sig_name == "rectangles"

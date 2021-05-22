@@ -40,16 +40,16 @@ k = 1;
         Fft_S_out_noise = fft(S_out_noise, FftL);
 
 %-------------------------------------блок без фильтрации-----------------
-        % Восстанавливаем входной сигнал по шумному выходному 
-        % с помощью передаточной функции
+%         % Восстанавливаем входной сигнал по шумному выходному 
+%         % с помощью передаточной функции
 %         fft_restored_signal = Fft_S_out_noise ./ W_line;
 %         restored_signal_noise = ifft(fft_restored_signal, FftL);
 
 
 
-%---------------------------------этот блок, если с фильтрацией-----------
-
-        %-------------------------------filter apply------------------------------
+% %---------------------------------этот блок, если с фильтрацией-----------
+% 
+%         %-------------------------------filter apply------------------------------
         Fft_S_out_filtered = Fft_S_out_noise .* ...
     bandpass_filter(Fs, FftL, 64, 5, 'no') .* exp(-1i*w.*angle(bandpass_filter(Fs, FftL, 64, 5, 'no')));
     % Важно помнить, что ФЧХ полосового фильтра не нулевое!
@@ -67,7 +67,6 @@ k = 1;
         sig_diff = abs( (restored_signal_filtered) - Signal);
 %         sig_diff = abs( real(restored_signal_noise) - Signal);
         sig_diff_squares = sqrt(sig_diff .^2);
-        %ind = int8(j*100);
 
         sq_err(k) = sum(sig_diff_squares) / length(Signal); % делим на кол-во отсчётов
         k = k+1;
@@ -78,12 +77,13 @@ k = 1;
     %-----------------------среднеквадратичная ошибка-----------------------
     
 x = (0:0.001:0.05)*100;
-    
+
+y = sq_err/(max(Signal));
 figure('Name', 'Относительная среднеквадратичная ошибка', 'NumberTitle', 'off');
 
-hold on;
-plot(x, sq_err/(max(Signal)));
-plot((0:0.005:0.05)*100, sq_err(1:5:end)/(max(Signal)), 'k.', 'MarkerSize', 15)
+% hold on;
+% plot(x, y);
+plot((0:0.002:0.05)*100, y(1:2:end), 'k.', 'MarkerSize', 20)
 
 title('Относительная среднеквадратичная ошибка');
 xlabel('шум/сигнал, %');
